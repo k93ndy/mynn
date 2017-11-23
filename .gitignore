@@ -1,4 +1,6 @@
 # ignore .git
 /.git
 # ignore __pycache__
-/__pycache__
+/__pycache_
+# ignore ipynb_checkpoints
+/.ipynb_checkpoints

@@ -19,17 +19,24 @@ def cross_entropy(y, y_label):
     #    y_label = y_label.argmax(axis=1)
     
     batch_size = y.shape[0]
-    return -np.sum(np.log(y[np.arange(batch_size), y_label])) / batch_size
+    print(batch_size)
+    return -np.sum(np.log(y[np.arange(batch_size), y_label.astype(np.int)])) / batch_size
 
 def softmax(x):
     if x.ndim == 2:
         x = x.T
-        x = x - np.max(x, axis=0)
+        x = x - np.max(x, axis=0) # prevent overflow
         y = np.exp(x) / np.sum(np.exp(x), axis=0)
         return y.T 
 
-    x = x - np.max(x) # オーバーフロー対策
+    x = x - np.max(x) # prevent overflow
     return np.exp(x) / np.sum(np.exp(x))
 
 def mean_squared_error(y, y_label):
     return np.sum((y - y_label) ** 2) / y.size
+
+def relu(x):
+    return np.maximum(0, x)
+
+def identity_function(x):
+    return x
