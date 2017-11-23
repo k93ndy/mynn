@@ -1,0 +1,4 @@
+# ignore .git
+/.git
+# ignore __pycache__
+/__pycache__
