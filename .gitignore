@@ -1,6 +1,4 @@
-# ignore .git
-/.git
-# ignore __pycache__
-/__pycache__
-# ignore ipynb_checkpoints
-/.ipynb_checkpoints
+.DS_Store
+.git/
+.ipynb_checkpoints/
+__pycache__/
