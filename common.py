@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 def union_shuffled_copies(a, b):
     assert len(a) == len(b)
