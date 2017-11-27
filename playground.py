@@ -6,25 +6,27 @@ from sklearn.model_selection import train_test_split
 from sklearn.datasets import fetch_mldata
 from matplotlib import pyplot as plt
 
-raw = make_classification(n_samples=1000, n_features=5, n_informative=5, n_redundant=0, n_repeated=0, n_classes=3, n_clusters_per_class=1)
+raw = make_classification(n_samples=1000, n_features=6, n_informative=6, n_redundant=0, n_repeated=0, n_classes=5, n_clusters_per_class=1)
 X_train, X_test, y_train, y_test = train_test_split(raw[0], raw[1], test_size=0.2, random_state=42)
 
-nn = MyNNWithBP([5, 8, 8, 3])
+nn = MyNNWithBP([6, 6, 5])
 
 # print(nn.get_param())
 print("Accucary before training:\t\t", nn.accuracy(X_test, y_test))
 print("Cross entropy loss before training:\t", nn.loss(X_test, y_test))
 
-cross_entropy_loss, accuracy = nn.train_minibatch(X_train, y_train, learning_rate=0.001, epoch=1000, batch_size=100, X_test=X_test, y_test=y_test, report=True)
+train_loss, test_loss, accuracy = nn.train_minibatch(X_train, y_train, learning_rate=0.001, epoch=1000, batch_size=100, X_test=X_test, y_test=y_test, report=True)
 
 print("Accucary after training:\t\t", nn.accuracy(X_test, y_test))
 print("Cross entropy loss after training:\t", nn.loss(X_test, y_test))
 # print(nn.get_param())
 
-cross_entropy_loss = np.array(cross_entropy_loss)
+train_loss = np.array(train_loss)
+test_loss = np.array(test_loss)
 accuracy = np.array(accuracy)
-plt.plot(cross_entropy_loss[:, 0], cross_entropy_loss[:, 1], linestyle='solid', label='cross entropy loss')
-plt.plot(accuracy[:, 0], accuracy[:, 1], linestyle='dashed', label='accuracy')
+plt.plot(train_loss[:, 0], train_loss[:, 1], linestyle='-.', label='loss of train set')
+plt.plot(test_loss[:, 0], test_loss[:, 1], linestyle='-', label='loss of test set')
+plt.plot(accuracy[:, 0], accuracy[:, 1], linestyle='--', label='accuracy')
 plt.legend()
 plt.show()
 

@@ -1,7 +1,7 @@
 import numpy as np
 from collections import OrderedDict
 from common import *
-from optimizer import SGD_basic
+from optimizer import *
 
 class MyNNWithBP:
     def __init__(self, shape):
@@ -50,8 +50,9 @@ class MyNNWithBP:
         X_shuffled, y_label_shuffled = union_shuffled_copies(X, y_label)
         return X_shuffled[range(batch_size)], y_label_shuffled[range(batch_size)]
 
-    def train_minibatch(self, X, y_label, learning_rate=0.01, optimizer=SGD_basic, epoch=100, batch_size=100, X_test=None, y_test=None, report=False):
-        report_epoch_loss = []
+    def train_minibatch(self, X, y_label, learning_rate=0.01, optimizer=SGD_Momentum, epoch=100, batch_size=100, X_test=None, y_test=None, report=False):
+        report_train_loss = []
+        report_test_loss = []
         report_accuracy = []
         for i in range(epoch):
             for j in range(np.ceil(np.size(X) / batch_size).astype(np.int)):
@@ -65,16 +66,17 @@ class MyNNWithBP:
                     #     layer.W = layer.W - layer.dW*learning_rate
                     #     layer.b = layer.b - layer.db*learning_rate
                 opt = optimizer(learning_rate)
-                # opt.update(self.layers)
                 for name, layer in self.layers.items():
                     if 'affline_tier' in name:
-                        opt.update(layer)
+                        opt.update(layer, name)
 
             if report is True:
-                loss = self.loss(X_test, y_test)
+                train_loss = self.loss(X, y_label)
+                test_loss = self.loss(X_test, y_test)
                 accuracy = self.accuracy(X_test, y_test)
-                report_epoch_loss.append([i+1, loss])
+                report_train_loss.append([i+1, train_loss])
+                report_test_loss.append([i+1, test_loss])
                 report_accuracy.append([i+1, accuracy])
 
         if report is True:
-            return (report_epoch_loss, report_accuracy)
+            return (report_train_loss, report_test_loss, report_accuracy)
