@@ -5,21 +5,29 @@ from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import fetch_mldata
 from matplotlib import pyplot as plt
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report
 
-raw = make_classification(n_samples=1000, n_features=6, n_informative=6, n_redundant=0, n_repeated=0, n_classes=5, n_clusters_per_class=1)
+raw = make_classification(n_samples=1000, n_features=4, n_informative=4, n_redundant=0, n_repeated=0, n_classes=2, n_clusters_per_class=1)
 X_train, X_test, y_train, y_test = train_test_split(raw[0], raw[1], test_size=0.2, random_state=42)
 
-nn = MyNNWithBP([6, 6, 5])
+nn = MyNNWithBP([4, 3, 2])
 
 # print(nn.get_param())
 print("Accucary before training:\t\t", nn.accuracy(X_test, y_test))
 print("Cross entropy loss before training:\t", nn.loss(X_test, y_test))
 
-train_loss, test_loss, accuracy = nn.train_minibatch(X_train, y_train, learning_rate=0.001, epoch=1000, batch_size=100, X_test=X_test, y_test=y_test, report=True)
+train_loss, test_loss, accuracy, precision, recall = nn.train_minibatch(X_train, y_train, learning_rate=0.001, epoch=3000, batch_size=100, X_test=X_test, y_test=y_test, report=True)
 
 print("Accucary after training:\t\t", nn.accuracy(X_test, y_test))
 print("Cross entropy loss after training:\t", nn.loss(X_test, y_test))
 # print(nn.get_param())
+
+forest = RandomForestClassifier()
+forest.fit(X_train, y_train)
+
+y_test_pred = forest.predict(X_test)
+print(classification_report(y_test_pred, y_test))
 
 train_loss = np.array(train_loss)
 test_loss = np.array(test_loss)

@@ -14,7 +14,7 @@ def sigmoid(x):
 def step_function(x):
     return np.array(x > 0, dtype=np.int)
 
-def cross_entropy(y, y_label):
+def cross_entropy(y, y_label, double_weight=None):
     if y.ndim == 1:
         y_label = y_label.reshape(1, y_label.size)
         y = y.reshape(1, y.size)
@@ -23,7 +23,12 @@ def cross_entropy(y, y_label):
     #    y_label = y_label.argmax(axis=1)
     
     batch_size = y.shape[0]
-    return -np.sum(np.log(y[np.arange(batch_size), y_label.astype(np.int)])) / batch_size
+    y_log = np.log(y[np.arange(batch_size), y_label.astype(np.int)])
+    if double_weight is not None:
+        y_log[y_label==double_weight] = y_log[y_label==double_weight] * 2
+
+
+    return -np.sum(y_log) / batch_size
 
 def softmax(x):
     if x.ndim == 2:

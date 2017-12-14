@@ -46,6 +46,28 @@ class MyNNWithBP:
         accurate_num = np.size(np.where((y == y_label)==True))
         return float(accurate_num) / total_num
 
+    def precision(self, X, y_label):
+        delta = 1e-5
+        y = self.predict(X)
+        y_1 = set(np.where(y == 1)[0])
+        y_label_1 = set(np.where(y_label == 1)[0])
+        y_label_0 = set(np.where(y_label == 0)[0])
+        tp = len(y_1&y_label_1)
+        fp = len(y_1&y_label_0)
+        # tp = np.sum((y == 1) == (y_label == 1))
+        # fp = np.sum((y == 1) == (y_label == 0))
+        return float(tp) / (tp + fp + delta)
+
+    def recall(self, X, y_label):
+        y = self.predict(X)
+        positive = np.size(np.where(y_label == True))
+        y_1 = set(np.where(y == 1)[0])
+        y_label_1 = set(np.where(y_label == 1)[0])
+        # y_label_0 = set(np.where(y_label == 0)[0])
+        tp = len(y_1&y_label_1)
+        # tp = np.sum((y == 1) == (y_label == 1))
+        return float(tp) / positive
+
     def get_data(self, X, y_label, batch_size=100):
         X_shuffled, y_label_shuffled = union_shuffled_copies(X, y_label)
         return X_shuffled[range(batch_size)], y_label_shuffled[range(batch_size)]
@@ -54,6 +76,8 @@ class MyNNWithBP:
         report_train_loss = []
         report_test_loss = []
         report_accuracy = []
+        report_precision = []
+        report_recall = []
         for i in range(epoch):
             for j in range(np.ceil(np.size(X) / batch_size).astype(np.int)):
                 X_batch, y_label_batch = self.get_data(X, y_label, batch_size)
@@ -74,9 +98,13 @@ class MyNNWithBP:
                 train_loss = self.loss(X, y_label)
                 test_loss = self.loss(X_test, y_test)
                 accuracy = self.accuracy(X_test, y_test)
+                precision = self.precision(X_test, y_test)
+                recall = self.recall(X_test, y_test)
                 report_train_loss.append([i+1, train_loss])
                 report_test_loss.append([i+1, test_loss])
                 report_accuracy.append([i+1, accuracy])
+                report_precision.append([i+1, precision])
+                report_recall.append([i+1, recall])
 
         if report is True:
-            return (report_train_loss, report_test_loss, report_accuracy)
+            return (report_train_loss, report_test_loss, report_accuracy, report_precision, report_recall)
