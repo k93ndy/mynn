@@ -2,3 +2,4 @@
 .git/
 .ipynb_checkpoints/
 __pycache__/
+tf_logs/
